@@ -48,12 +48,9 @@ export const useStyles = createStyles(
         height: 100%;
       `,
       scrollBox: css`
-        background: transparent;
+        background: transparent !important;
       `,
-    }) as Partial<{
-      // eslint-disable-next-line unused-imports/no-unused-vars
-      [k in keyof ElementsConfig]: any;
-    }>,
+    }) as Partial<Record<keyof ElementsConfig, any>>,
 );
 
 const Client = memo<{ mobile?: boolean }>(({ mobile }) => {

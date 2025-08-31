@@ -45,14 +45,25 @@
   },
   "hotkey": {
     "conflicts": "Conflicto con las teclas de acceso rápido existentes",
+    "errors": {
+      "CONFLICT": "Conflicto de atajo: este atajo ya está asignado a otra función",
+      "INVALID_FORMAT": "Formato de atajo inválido: por favor use el formato correcto (por ejemplo, CommandOrControl+E)",
+      "INVALID_ID": "ID de atajo inválido",
+      "NO_MODIFIER": "El atajo debe incluir una tecla modificadora (Ctrl, Alt, Shift, etc.)",
+      "SYSTEM_OCCUPIED": "El atajo está ocupado por el sistema u otra aplicación",
+      "UNKNOWN": "Error al actualizar: error desconocido"
+    },
     "group": {
       "conversation": "Conversación",
+      "desktop": "Escritorio",
       "essential": "Esencial"
     },
     "invalidCombination": "La combinación de teclas de acceso rápido debe incluir al menos una tecla modificadora (Ctrl, Alt, Shift) y una tecla normal",
     "record": "Presiona una tecla para grabar la tecla de acceso rápido",
     "reset": "Restablecer a las teclas de acceso rápido predeterminadas",
-    "title": "Atajos de teclado"
+    "title": "Atajos de teclado",
+    "updateError": "Error al actualizar el atajo: problema de red o del sistema",
+    "updateSuccess": "Atajo actualizado con éxito"
   },
   "llm": {
     "aesGcm": "Su clave y dirección del agente se cifrarán utilizando el algoritmo de cifrado <1>AES-GCM</1>",
@@ -129,6 +140,7 @@
     "waitingForMore": "Más modelos están en <1>planificación para su incorporación</1>, ¡estén atentos!"
   },
   "plugin": {
+    "addMCPPlugin": "Agregar complemento MCP",
     "addTooltip": "Agregar complemento personalizado",
     "clearDeprecated": "Eliminar complementos obsoletos",
     "empty": "No hay complementos instalados actualmente, visita la <1>tienda de complementos</1> para explorar",
@@ -170,6 +182,31 @@
     },
     "title": "Información del asistente"
   },
+  "settingAppearance": {
+    "animationMode": {
+      "agile": "Ágil",
+      "desc": "Selecciona la velocidad de la animación para las respuestas de la aplicación",
+      "disabled": "Desactivado",
+      "elegant": "Elegante",
+      "title": "Animación de respuesta"
+    },
+    "neutralColor": {
+      "desc": "Personalización de escalas de grises con diferentes inclinaciones de color",
+      "title": "Color Neutro"
+    },
+    "noAnimation": {
+      "desc": "Desactiva todos los efectos de animación en la aplicación",
+      "title": "Modo sin animación"
+    },
+    "preview": {
+      "title": "Paleta de Colores"
+    },
+    "primaryColor": {
+      "desc": "Color del tema personalizado",
+      "title": "Color del Tema"
+    },
+    "title": "Apariencia de la Aplicación"
+  },
   "settingChat": {
     "autoCreateTopicThreshold": {
       "desc": "Se creará automáticamente un tema cuando el número de mensajes actuales supere este valor",
@@ -200,6 +237,10 @@
       "title": "Limitar número de mensajes históricos",
       "unlimited": "Sin límite de mensajes históricos"
     },
+    "enableStreaming": {
+      "desc": "Habilita la salida en streaming para mostrar la respuesta en tiempo real. Si se desactiva, solo se mostrará la respuesta completa.",
+      "title": "Habilitar salida en streaming"
+    },
     "historyCount": {
       "desc": "Número de mensajes incluidos en cada solicitud (incluyendo las preguntas más recientes. Cada pregunta y respuesta se cuenta como 1)",
       "title": "Número de mensajes incluidos"
@@ -211,6 +252,47 @@
     },
     "submit": "Actualizar preferencias de chat",
     "title": "Configuración de chat"
+  },
+  "settingChatAppearance": {
+    "fontSize": {
+      "desc": "Tamaño de fuente del contenido del chat",
+      "marks": {
+        "normal": "Estándar"
+      },
+      "title": "Tamaño de Fuente"
+    },
+    "highlighterTheme": {
+      "title": "Tema de Resaltado de Código"
+    },
+    "mermaidTheme": {
+      "title": "Tema Sirena"
+    },
+    "title": "Apariencia del Chat",
+    "transitionMode": {
+      "desc": "Animación de transición de los mensajes de chat",
+      "options": {
+        "fadeIn": "Aparecer gradualmente",
+        "none": {
+          "desc": "Depende de la forma en que el modelo genera la respuesta, por favor pruébelo usted mismo.",
+          "value": "Ninguna"
+        },
+        "smooth": "Suave"
+      },
+      "title": "Animación de transición"
+    }
+  },
+  "settingCommon": {
+    "lang": {
+      "autoMode": "Seguir el sistema",
+      "title": "Idioma"
+    },
+    "themeMode": {
+      "auto": "Automático",
+      "dark": "Oscuro",
+      "light": "Claro",
+      "title": "Tema"
+    },
+    "title": "Configuración Común"
   },
   "settingModel": {
     "enableMaxTokens": {
@@ -239,7 +321,7 @@
       "title": "Diversidad de expresión"
     },
     "reasoningEffort": {
-      "desc": "Cuanto mayor sea el valor, más fuerte será la capacidad de razonamiento, pero puede aumentar el tiempo de respuesta y el consumo de tokens.",
+      "desc": "Cuanto mayor sea el valor, más fuerte será la capacidad de razonamiento, pero puede aumentar el tiempo de respuesta y el consumo de tokens",
       "options": {
         "high": "Alto",
         "low": "Bajo",
@@ -337,37 +419,6 @@
       "title": "Voz de síntesis de voz"
     }
   },
-  "settingTheme": {
-    "avatar": {
-      "title": "Avatar"
-    },
-    "fontSize": {
-      "desc": "Tamaño de fuente para el contenido del chat",
-      "marks": {
-        "normal": "Normal"
-      },
-      "title": "Tamaño de fuente"
-    },
-    "lang": {
-      "autoMode": "Seguir sistema",
-      "title": "Idioma"
-    },
-    "neutralColor": {
-      "desc": "Personalización de la escala de grises para diferentes tendencias de color",
-      "title": "Color neutro"
-    },
-    "primaryColor": {
-      "desc": "Color principal personalizado",
-      "title": "Color principal"
-    },
-    "themeMode": {
-      "auto": "Automático",
-      "dark": "Oscuro",
-      "light": "Claro",
-      "title": "Tema"
-    },
-    "title": "Configuración de tema"
-  },
   "storage": {
     "actions": {
       "export": {
@@ -459,6 +510,11 @@
       "placeholder": "Introduce la palabra clave personalizada",
       "title": "Palabra clave personalizada"
     },
+    "generationTopic": {
+      "label": "Modelo de denominación de temas para pintura AI",
+      "modelDesc": "Modelo designado para la denominación automática de temas en pintura AI",
+      "title": "Denominación automática de temas para pintura AI"
+    },
     "helpInfo": "Al crear un nuevo asistente, se utilizarán los ajustes predeterminados del asistente como valores predeterminados.",
     "historyCompress": {
       "label": "Modelo de historial de conversación",
@@ -495,6 +551,7 @@
     "hotkey": "Atajos de teclado",
     "llm": "Modelo de lenguaje",
     "provider": "Proveedor de servicios de IA",
+    "proxy": "Proxy de red",
     "storage": "Almacenamiento de datos",
     "sync": "Sincronización en la nube",
     "system-agent": "Asistente del sistema",

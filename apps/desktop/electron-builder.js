@@ -9,7 +9,18 @@ const channel = process.env.UPDATE_CHANNEL;
 console.log(`🚄 Build Version ${packageJSON.version}, Channel: ${channel}`);
 
 const isNightly = channel === 'nightly';
-const isBeta = channel === 'beta';
+const isBeta = packageJSON.name.includes('beta');
+
+// 根据版本类型确定协议 scheme
+const getProtocolScheme = () => {
+  if (isNightly) return 'lobehub-nightly';
+  if (isBeta) return 'lobehub-beta';
+
+  return 'lobehub';
+};
+
+const protocolScheme = getProtocolScheme();
+
 /**
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration
@@ -24,6 +35,11 @@ const config = {
     artifactName: '${productName}-${version}.${ext}',
   },
   asar: true,
+  asarUnpack: [
+    // https://github.com/electron-userland/electron-builder/issues/9001#issuecomment-2778802044
+    '**/node_modules/sharp/**/*',
+    '**/node_modules/@img/**/*',
+  ],
   detectUpdateChannel: true,
   directories: {
     buildResources: 'build',
@@ -48,23 +64,25 @@ const config = {
   linux: {
     category: 'Utility',
     maintainer: 'electronjs.org',
-    target: ['AppImage', 'snap', 'deb'],
+    target: ['AppImage', 'snap', 'deb', 'rpm', 'tar.gz'],
   },
   mac: {
     compression: 'maximum',
     entitlementsInherit: 'build/entitlements.mac.plist',
-    extendInfo: [
-      { NSCameraUsageDescription: "Application requests access to the device's camera." },
-      { NSMicrophoneUsageDescription: "Application requests access to the device's microphone." },
-      {
-        NSDocumentsFolderUsageDescription:
-          "Application requests access to the user's Documents folder.",
-      },
-      {
-        NSDownloadsFolderUsageDescription:
-          "Application requests access to the user's Downloads folder.",
-      },
-    ],
+    extendInfo: {
+      CFBundleURLTypes: [
+        {
+          CFBundleURLName: 'LobeHub Protocol',
+          CFBundleURLSchemes: [protocolScheme],
+        },
+      ],
+      NSCameraUsageDescription: "Application requests access to the device's camera.",
+      NSDocumentsFolderUsageDescription:
+        "Application requests access to the user's Documents folder.",
+      NSDownloadsFolderUsageDescription:
+        "Application requests access to the user's Downloads folder.",
+      NSMicrophoneUsageDescription: "Application requests access to the device's microphone.",
+    },
     gatekeeperAssess: false,
     hardenedRuntime: true,
     notarize: true,
@@ -82,10 +100,19 @@ const config = {
     allowToChangeInstallationDirectory: true,
     artifactName: '${productName}-${version}-setup.${ext}',
     createDesktopShortcut: 'always',
+    installerHeader: './build/nsis-header.bmp',
+    installerSidebar: './build/nsis-sidebar.bmp',
     oneClick: false,
     shortcutName: '${productName}',
     uninstallDisplayName: '${productName}',
+    uninstallerSidebar: './build/nsis-sidebar.bmp',
   },
+  protocols: [
+    {
+      name: 'LobeHub Protocol',
+      schemes: [protocolScheme],
+    },
+  ],
   publish: [
     {
       owner: 'lobehub',

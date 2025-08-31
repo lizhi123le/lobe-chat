@@ -1,4 +1,5 @@
-import { EnabledAiModel } from '@/types/aiModel';
+import { EnabledAiModel } from 'model-bank';
+
 import {
   AiProviderDetailItem,
   AiProviderListItem,
@@ -19,6 +20,7 @@ export interface AIProviderState {
   enabledAiProviders?: EnabledProvider[];
   // used for select
   enabledChatModelList?: EnabledProviderWithModels[];
+  enabledImageModelList?: EnabledProviderWithModels[];
   initAiProviderList: boolean;
   providerSearchKeyword: string;
 }

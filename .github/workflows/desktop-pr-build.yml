@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest # 只在 ubuntu 上运行一次检查
     steps:
       - name: Checkout base
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -35,7 +35,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 10
 
       - name: Install deps
         run: pnpm install
@@ -56,7 +56,7 @@ jobs:
       # 输出版本信息，供后续 job 使用
       version: ${{ steps.set_version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -93,9 +93,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, windows-2025, ubuntu-latest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -107,7 +107,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 10
 
       # node-linker=hoisted 模式将可以确保 asar 压缩可用
       - name: Install deps
@@ -143,9 +143,9 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
-      # 非 macOS 平台构建处理
-      - name: Build artifact on other platforms
-        if: runner.os != 'macOS'
+      #  Windows 平台构建处理
+      - name: Build artifact on Windows
+        if: runner.os == 'Windows'
         run: npm run desktop:build
         env:
           # 设置更新通道，PR构建为nightly，否则为stable
@@ -155,7 +155,22 @@ jobs:
           KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
           NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_PROJECT_ID }}
           NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_BASE_URL }}
+          # 将 TEMP 和 TMP 目录设置到 C 盘
+          TEMP: C:\temp
+          TMP: C:\temp
 
+      # Linux 平台构建处理
+      - name: Build artifact on Linux
+        if: runner.os == 'Linux'
+        run: npm run desktop:build
+        env:
+          # 设置更新通道，PR构建为nightly，否则为stable
+          UPDATE_CHANNEL: 'nightly'
+          APP_URL: http://localhost:3015
+          DATABASE_URL: 'postgresql://postgres@localhost:5432/postgres'
+          KEY_VAULTS_SECRET: 'oLXWIiR/AKF+rWaqy9lHkrYgzpATbW3CtJp3UfkVgpE='
+          NEXT_PUBLIC_DESKTOP_PROJECT_ID: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_PROJECT_ID }}
+          NEXT_PUBLIC_DESKTOP_UMAMI_BASE_URL: ${{ secrets.UMAMI_NIGHTLY_DESKTOP_BASE_URL }}
 
       # 上传构建产物
       - name: Upload artifact
@@ -168,6 +183,10 @@ jobs:
             apps/desktop/release/*.zip*
             apps/desktop/release/*.exe*
             apps/desktop/release/*.AppImage
+            apps/desktop/release/*.deb*
+            apps/desktop/release/*.snap*
+            apps/desktop/release/*.rpm*
+            apps/desktop/release/*.tar.gz*
           retention-days: 5
 
   publish-pr:
@@ -181,7 +200,7 @@ jobs:
     outputs:
       artifact_path: ${{ steps.set_path.outputs.path }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -230,6 +249,10 @@ jobs:
             release/*.zip*
             release/*.exe*
             release/*.AppImage
+            release/*.deb*
+            release/*.snap*
+            release/*.rpm*
+            release/*.tar.gz*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -1,12 +1,14 @@
 'use client';
 
-import { ChatItem } from '@lobehub/ui/chat';
 import { createStyles } from 'antd-style';
 import isEqual from 'fast-deep-equal';
 import { MouseEventHandler, ReactNode, memo, use, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
+import { HtmlPreviewAction } from '@/components/HtmlPreview';
+import { isDesktop } from '@/const/version';
+import ChatItem from '@/features/ChatItem';
 import { VirtuosoContext } from '@/features/Conversation/components/VirtualizedList/VirtuosoContext';
 import { useAgentStore } from '@/store/agent';
 import { agentChatConfigSelectors } from '@/store/agent/selectors';
@@ -31,6 +33,14 @@ import { normalizeThinkTags, processWithArtifact } from './utils';
 
 const rehypePlugins = markdownElements.map((element) => element.rehypePlugin).filter(Boolean);
 const remarkPlugins = markdownElements.map((element) => element.remarkPlugin).filter(Boolean);
+
+const isHtmlCode = (content: string, language: string) => {
+  return (
+    language === 'html' ||
+    (language === '' && content.includes('<html>')) ||
+    (language === '' && content.includes('<!DOCTYPE html>'))
+  );
+};
 
 const useStyles = createStyles(({ css, prefixCls }) => ({
   loading: css`
@@ -72,7 +82,7 @@ const Item = memo<ChatListItemProps>(
 
     const type = useAgentStore(agentChatConfigSelectors.displayMode);
     const item = useChatStore(chatSelectors.getMessageById(id), isEqual);
-    const fontSize = useUserStore(userGeneralSettingsSelectors.fontSize);
+    const transitionMode = useUserStore(userGeneralSettingsSelectors.transitionMode);
 
     const [
       isMessageLoading,
@@ -92,6 +102,7 @@ const Item = memo<ChatListItemProps>(
 
     // when the message is in RAG flow or the AI generating, it should be in loading state
     const isProcessing = isInRAGFlow || generating;
+    const animated = transitionMode === 'fadeIn' && generating;
 
     const onAvatarsClick = useAvatarsClick(item?.role);
 
@@ -171,13 +182,28 @@ const Item = memo<ChatListItemProps>(
 
     const markdownProps = useMemo(
       () => ({
+        animated,
         citations: item?.role === 'user' ? undefined : item?.search?.citations,
+        componentProps: {
+          highlight: {
+            actionsRender: ({ content, actionIconSize, language, originalNode }: any) => {
+              const showHtmlPreview = isHtmlCode(content, language);
+
+              return (
+                <>
+                  {showHtmlPreview && <HtmlPreviewAction content={content} size={actionIconSize} />}
+                  {originalNode}
+                </>
+              );
+            },
+          },
+        },
         components,
         customRender: markdownCustomRender,
         enableCustomFootnotes: item?.role === 'assistant',
         rehypePlugins: item?.role === 'user' ? undefined : rehypePlugins,
         remarkPlugins: item?.role === 'user' ? undefined : remarkPlugins,
-        showCitations:
+        showFootnotes:
           item?.role === 'user'
             ? undefined
             : item?.search?.citations &&
@@ -186,7 +212,7 @@ const Item = memo<ChatListItemProps>(
               // if the citations's url and title are all the same, we should not show the citations
               item?.search?.citations.every((item) => item.title !== item.url),
       }),
-      [components, markdownCustomRender, item?.role, item?.search],
+      [animated, components, markdownCustomRender, item?.role, item?.search],
     );
 
     const onChange = useCallback((value: string) => updateMessageContent(id, value), [id]);
@@ -218,6 +244,19 @@ const Item = memo<ChatListItemProps>(
       toggleMessageEditing(id, edit);
     }, []);
 
+    const onContextMenu = useCallback(async () => {
+      if (isDesktop && item) {
+        const { electronSystemService } = await import('@/services/electron/system');
+
+        electronSystemService.showContextMenu('chat', {
+          content: item.content,
+          hasError: !!item.error,
+          messageId: id,
+          role: item.role,
+        });
+      }
+    }, [id, item]);
+
     const belowMessage = useMemo(() => item && <BelowMessage data={item} />, [item]);
     const errorMessage = useMemo(() => item && <ErrorMessageExtra data={item} />, [item]);
     const messageExtra = useMemo(() => item && <MessageExtra data={item} />, [item]);
@@ -226,7 +265,10 @@ const Item = memo<ChatListItemProps>(
       item && (
         <InPortalThreadContext.Provider value={inPortalThread}>
           {enableHistoryDivider && <History />}
-          <Flexbox className={cx(styles.message, className, isMessageLoading && styles.loading)}>
+          <Flexbox
+            className={cx(styles.message, className, isMessageLoading && styles.loading)}
+            onContextMenu={onContextMenu}
+          >
             <ChatItem
               actions={actionBar}
               avatar={item.meta}
@@ -234,7 +276,6 @@ const Item = memo<ChatListItemProps>(
               editing={editing}
               error={error}
               errorMessage={errorMessage}
-              fontSize={fontSize}
               loading={isProcessing}
               markdownProps={markdownProps}
               message={message}

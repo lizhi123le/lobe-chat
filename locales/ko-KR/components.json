@@ -1,4 +1,9 @@
 {
+  "ArgsInput": {
+    "addArgument": "매개변수 추가",
+    "argumentPlaceholder": "매개변수 {{index}}",
+    "enterFirstArgument": "첫 번째 매개변수를 입력하세요..."
+  },
   "DragUpload": {
     "dragDesc": "여기에 파일을 드래그하여 여러 이미지를 업로드할 수 있습니다.",
     "dragFileDesc": "여기에 이미지와 파일을 드래그하여 여러 이미지와 파일을 업로드할 수 있습니다.",
@@ -68,6 +73,35 @@
   "GoBack": {
     "back": "뒤로 가기"
   },
+  "HtmlPreview": {
+    "actions": {
+      "download": "다운로드",
+      "preview": "미리보기"
+    },
+    "iframeTitle": "HTML 미리보기",
+    "mode": {
+      "code": "코드",
+      "preview": "미리보기"
+    },
+    "title": "HTML 미리보기"
+  },
+  "ImageUpload": {
+    "actions": {
+      "changeImage": "이미지 변경 클릭",
+      "dropMultipleFiles": "여러 파일 업로드는 지원하지 않으며, 첫 번째 파일만 사용됩니다"
+    },
+    "placeholder": {
+      "primary": "이미지 추가",
+      "secondary": "클릭하거나 드래그하여 업로드"
+    }
+  },
+  "KeyValueEditor": {
+    "addButton": "새 행 추가",
+    "deleteTooltip": "삭제",
+    "duplicateKeyError": "키 이름은 고유해야 합니다",
+    "keyPlaceholder": "키",
+    "valuePlaceholder": "값"
+  },
   "MaxTokenSlider": {
     "unlimited": "무제한"
   },
@@ -90,6 +124,31 @@
     "goToSettings": "설정으로 가기",
     "provider": "제공자",
     "title": "모델"
+  },
+  "MultiImagesUpload": {
+    "actions": {
+      "uploadMore": "클릭하거나 드래그하여 더 업로드"
+    },
+    "modal": {
+      "complete": "완료",
+      "newFileIndicator": "새로 추가됨",
+      "selectImageToPreview": "미리 볼 이미지를 선택하세요",
+      "title": "이미지 관리 ({{count}})",
+      "upload": "이미지 업로드"
+    },
+    "placeholder": {
+      "primary": "클릭하거나 드래그하여 이미지를 업로드하세요",
+      "secondary": "여러 이미지 선택 가능"
+    },
+    "progress": {
+      "uploadingWithCount": "{{completed}}/{{total}} 업로드 완료"
+    },
+    "validation": {
+      "fileSizeExceeded": "파일 용량이 허용된 최대 크기를 초과했습니다",
+      "fileSizeExceededDetail": "{{fileName}} ({{actualSize}})이(가) 허용된 최대 크기 {{maxSize}}를 초과했습니다",
+      "fileSizeExceededMultiple": "{{count}}개의 파일이 허용된 최대 크기 {{maxSize}}를 초과합니다: {{fileList}}",
+      "imageCountExceeded": "이미지 수가 허용된 한도를 초과했습니다"
+    }
   },
   "OllamaSetupGuide": {
     "action": {

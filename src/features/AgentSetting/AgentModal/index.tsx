@@ -1,7 +1,7 @@
 'use client';
 
 import { Form, type FormGroupItemType, Select, SliderWithInput } from '@lobehub/ui';
-import { Switch } from 'antd';
+import { Form as AntdForm, Switch } from 'antd';
 import isEqual from 'fast-deep-equal';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,8 @@ import { selectors, useStore } from '../store';
 const AgentModal = memo(() => {
   const { t } = useTranslation('setting');
   const [form] = Form.useForm();
+  const enableMaxTokens = AntdForm.useWatch(['chatConfig', 'enableMaxTokens'], form);
+  const enableReasoningEffort = AntdForm.useWatch(['chatConfig', 'enableReasoningEffort'], form);
   const config = useStore(selectors.currentAgentConfig, isEqual);
 
   const updateConfig = useStore((s) => s.setAgentConfig);
@@ -28,6 +30,15 @@ const AgentModal = memo(() => {
         label: t('settingModel.model.title'),
         name: '_modalConfig',
         tag: 'model',
+      },
+      {
+        children: <Switch />,
+        desc: t('settingChat.enableStreaming.desc'),
+        label: t('settingChat.enableStreaming.title'),
+        layout: 'horizontal',
+        minWidth: undefined,
+        name: ['chatConfig', 'enableStreaming'],
+        valuePropName: 'checked',
       },
       {
         children: <SliderWithInput max={2} min={0} step={0.1} />,
@@ -66,10 +77,10 @@ const AgentModal = memo(() => {
         valuePropName: 'checked',
       },
       {
-        children: <SliderWithInput max={32_000} min={0} step={100} />,
+        children: <SliderWithInput max={32_000} min={0} step={100} unlimitedInput={true} />,
         desc: t('settingModel.maxTokens.desc'),
         divider: false,
-        hidden: !config.chatConfig.enableMaxTokens,
+        hidden: !enableMaxTokens,
         label: t('settingModel.maxTokens.title'),
         name: ['params', 'max_tokens'],
         tag: 'max_tokens',
@@ -94,7 +105,7 @@ const AgentModal = memo(() => {
           />
         ),
         desc: t('settingModel.reasoningEffort.desc'),
-        hidden: !config.chatConfig.enableReasoningEffort,
+        hidden: !enableReasoningEffort,
         label: t('settingModel.reasoningEffort.title'),
         name: ['params', 'reasoning_effort'],
         tag: 'reasoning_effort',

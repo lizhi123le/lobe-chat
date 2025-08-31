@@ -1,5 +1,5 @@
-import { ActionIcon, ActionIconProps } from '@lobehub/ui';
-import { Compass, FolderClosed, MessageSquare } from 'lucide-react';
+import { ActionIcon, ActionIconProps, Hotkey } from '@lobehub/ui';
+import { Compass, FolderClosed, MessageSquare, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,9 @@ import { useGlobalStore } from '@/store/global';
 import { SidebarTabKey } from '@/store/global/initialState';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useSessionStore } from '@/store/session';
+import { useUserStore } from '@/store/user';
+import { settingsSelectors } from '@/store/user/selectors';
+import { HotkeyEnum } from '@/types/hotkey';
 
 const ICON_SIZE: ActionIconProps['size'] = {
   blockSize: 40,
@@ -24,11 +27,14 @@ export interface TopActionProps {
 const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
   const { t } = useTranslation('common');
   const switchBackToChat = useGlobalStore((s) => s.switchBackToChat);
-  const { showMarket, enableKnowledgeBase } = useServerConfigStore(featureFlagsSelectors);
+  const { showMarket, enableKnowledgeBase, showAiImage } =
+    useServerConfigStore(featureFlagsSelectors);
+  const hotkey = useUserStore(settingsSelectors.getHotkeyById(HotkeyEnum.NavigateToChat));
 
   const isChatActive = tab === SidebarTabKey.Chat && !isPinned;
   const isFilesActive = tab === SidebarTabKey.Files;
   const isDiscoverActive = tab === SidebarTabKey.Discover;
+  const isImageActive = tab === SidebarTabKey.Image;
 
   return (
     <Flexbox gap={8}>
@@ -36,6 +42,12 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
         aria-label={t('tab.chat')}
         href={'/chat'}
         onClick={(e) => {
+          // If Cmd key is pressed, let the default link behavior happen (open in new tab)
+          if (e.metaKey || e.ctrlKey) {
+            return;
+          }
+
+          // Otherwise, prevent default and switch session within the current tab
           e.preventDefault();
           switchBackToChat(useSessionStore.getState().activeId);
         }}
@@ -44,7 +56,12 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
           active={isChatActive}
           icon={MessageSquare}
           size={ICON_SIZE}
-          title={t('tab.chat')}
+          title={
+            <Flexbox align={'center'} gap={8} horizontal justify={'space-between'}>
+              <span>{t('tab.chat')}</span>
+              <Hotkey inverseTheme keys={hotkey} />
+            </Flexbox>
+          }
           tooltipProps={{ placement: 'right' }}
         />
       </Link>
@@ -55,6 +72,17 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
             icon={FolderClosed}
             size={ICON_SIZE}
             title={t('tab.files')}
+            tooltipProps={{ placement: 'right' }}
+          />
+        </Link>
+      )}
+      {showAiImage && (
+        <Link aria-label={t('tab.aiImage')} href={'/image'}>
+          <ActionIcon
+            active={isImageActive}
+            icon={Palette}
+            size={ICON_SIZE}
+            title={t('tab.aiImage')}
             tooltipProps={{ placement: 'right' }}
           />
         </Link>

@@ -1,9 +1,9 @@
-import { Icon, Tag } from '@lobehub/ui';
+import { Icon } from '@lobehub/ui';
 import {
   Bot,
   Brain,
-  Cloudy,
   Database,
+  EthernetPort,
   Info,
   KeyboardIcon,
   Mic2,
@@ -13,18 +13,16 @@ import {
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flexbox } from 'react-layout-kit';
 
 import type { MenuProps } from '@/components/Menu';
-import { isDeprecatedEdition } from '@/const/version';
+import { isDeprecatedEdition, isDesktop } from '@/const/version';
 import { SettingsTabs } from '@/store/global/initialState';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 export const useCategory = () => {
   const { t } = useTranslation('setting');
   const mobile = useServerConfigStore((s) => s.isMobile);
-  const { enableWebrtc, showLLM, enableSTT, hideDocs } =
-    useServerConfigStore(featureFlagsSelectors);
+  const { showLLM, enableSTT, hideDocs } = useServerConfigStore(featureFlagsSelectors);
 
   const cateItems: MenuProps['items'] = useMemo(
     () =>
@@ -44,21 +42,6 @@ export const useCategory = () => {
           label: (
             <Link href={'/settings/agent'} onClick={(e) => e.preventDefault()}>
               {t('tab.agent')}
-            </Link>
-          ),
-        },
-        // TODO: remove in V2
-        enableWebrtc && {
-          icon: <Icon icon={Cloudy} />,
-          key: SettingsTabs.Sync,
-          label: (
-            <Link href={'/settings/sync'} onClick={(e) => e.preventDefault()}>
-              <Flexbox align={'center'} gap={8} horizontal>
-                {t('tab.sync')}
-                <Tag bordered={false} color={'warning'}>
-                  {t('tab.experiment')}
-                </Tag>
-              </Flexbox>
             </Link>
           ),
         },
@@ -117,6 +100,15 @@ export const useCategory = () => {
         {
           type: 'divider',
         },
+        isDesktop && {
+          icon: <Icon icon={EthernetPort} />,
+          key: SettingsTabs.Proxy,
+          label: (
+            <Link href={'/settings/proxy'} onClick={(e) => e.preventDefault()}>
+              {t('tab.proxy')}
+            </Link>
+          ),
+        },
         {
           icon: <Icon icon={Database} />,
           key: SettingsTabs.Storage,
@@ -136,7 +128,7 @@ export const useCategory = () => {
           ),
         },
       ].filter(Boolean) as MenuProps['items'],
-    [t, enableWebrtc, showLLM],
+    [t, showLLM],
   );
 
   return cateItems;

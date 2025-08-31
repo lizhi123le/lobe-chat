@@ -78,6 +78,9 @@ export const getLLMConfig = () => {
       ENABLED_XINFERENCE: z.boolean(),
       XINFERENCE_API_KEY: z.string().optional(),
 
+      ENABLED_QINIU: z.boolean(),
+      QINIU_API_KEY: z.string().optional(),
+
       ENABLED_QWEN: z.boolean(),
       QWEN_API_KEY: z.string().optional(),
 
@@ -159,6 +162,27 @@ export const getLLMConfig = () => {
 
       ENABLED_INFINIAI: z.boolean(),
       INFINIAI_API_KEY: z.string().optional(),
+
+      ENABLED_FAL: z.boolean(),
+      FAL_API_KEY: z.string().optional(),
+
+      ENABLED_BFL: z.boolean(),
+      BFL_API_KEY: z.string().optional(),
+
+      ENABLED_MODELSCOPE: z.boolean(),
+      MODELSCOPE_API_KEY: z.string().optional(),
+
+      ENABLED_V0: z.boolean(),
+      V0_API_KEY: z.string().optional(),
+
+      ENABLED_AI302: z.boolean(),
+      AI302_API_KEY: z.string().optional(),
+
+      ENABLED_AKASHCHAT: z.boolean(),
+      AKASHCHAT_API_KEY: z.string().optional(),
+
+      ENABLED_AIHUBMIX: z.boolean(),
+      AIHUBMIX_API_KEY: z.string().optional(),
     },
     runtimeEnv: {
       API_KEY_SELECT_MODE: process.env.API_KEY_SELECT_MODE,
@@ -236,6 +260,9 @@ export const getLLMConfig = () => {
 
       ENABLED_XINFERENCE: !!process.env.XINFERENCE_API_KEY,
       XINFERENCE_API_KEY: process.env.XINFERENCE_API_KEY,
+
+      ENABLED_QINIU: !!process.env.QINIU_API_KEY,
+      QINIU_API_KEY: process.env.QINIU_API_KEY,
 
       ENABLED_QWEN: !!process.env.QWEN_API_KEY,
       QWEN_API_KEY: process.env.QWEN_API_KEY,
@@ -316,6 +343,27 @@ export const getLLMConfig = () => {
 
       ENABLED_INFINIAI: !!process.env.INFINIAI_API_KEY,
       INFINIAI_API_KEY: process.env.INFINIAI_API_KEY,
+
+      ENABLED_FAL: process.env.ENABLED_FAL !== '0',
+      FAL_API_KEY: process.env.FAL_API_KEY,
+
+      ENABLED_BFL: !!process.env.BFL_API_KEY,
+      BFL_API_KEY: process.env.BFL_API_KEY,
+
+      ENABLED_MODELSCOPE: !!process.env.MODELSCOPE_API_KEY,
+      MODELSCOPE_API_KEY: process.env.MODELSCOPE_API_KEY,
+
+      ENABLED_V0: !!process.env.V0_API_KEY,
+      V0_API_KEY: process.env.V0_API_KEY,
+
+      ENABLED_AI302: !!process.env.AI302_API_KEY,
+      AI302_API_KEY: process.env.AI302_API_KEY,
+
+      ENABLED_AKASHCHAT: !!process.env.AKASHCHAT_API_KEY,
+      AKASHCHAT_API_KEY: process.env.AKASHCHAT_API_KEY,
+
+      ENABLED_AIHUBMIX: !!process.env.AIHUBMIX_API_KEY,
+      AIHUBMIX_API_KEY: process.env.AIHUBMIX_API_KEY,
     },
   });
 };

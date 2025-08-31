@@ -11,14 +11,14 @@ import { agentChatConfigSelectors, agentSelectors } from '@/store/agent/selector
 import { aiModelSelectors, useAiInfraStore } from '@/store/aiInfra';
 
 import ContextCachingSwitch from './ContextCachingSwitch';
+import GPT5ReasoningEffortSlider from './GPT5ReasoningEffortSlider';
+import ReasoningEffortSlider from './ReasoningEffortSlider';
 import ReasoningTokenSlider from './ReasoningTokenSlider';
+import TextVerbositySlider from './TextVerbositySlider';
+import ThinkingBudgetSlider from './ThinkingBudgetSlider';
+import ThinkingSlider from './ThinkingSlider';
 
-interface ControlsProps {
-  setUpdating: (updating: boolean) => void;
-  updating: boolean;
-}
-
-const ControlsForm = memo<ControlsProps>(({ setUpdating }) => {
+const ControlsForm = memo(() => {
   const { t } = useTranslation('chat');
   const [model, provider, updateAgentChatConfig] = useAgentStore((s) => [
     agentSelectors.currentAgentModel(s),
@@ -76,12 +76,78 @@ const ControlsForm = memo<ControlsProps>(({ setUpdating }) => {
       minWidth: undefined,
       name: 'enableReasoning',
     },
-    enableReasoning && {
+    (enableReasoning || modelExtendParams?.includes('reasoningBudgetToken')) && {
       children: <ReasoningTokenSlider />,
       label: t('extendParams.reasoningBudgetToken.title'),
       layout: 'vertical',
       minWidth: undefined,
       name: 'reasoningBudgetToken',
+      style: {
+        paddingBottom: 0,
+      },
+    },
+    {
+      children: <ReasoningEffortSlider />,
+      desc: 'reasoning_effort',
+      label: t('extendParams.reasoningEffort.title'),
+      layout: 'horizontal',
+      minWidth: undefined,
+      name: 'reasoningEffort',
+      style: {
+        paddingBottom: 0,
+      },
+    },
+    {
+      children: <GPT5ReasoningEffortSlider />,
+      desc: 'reasoning_effort',
+      label: t('extendParams.reasoningEffort.title'),
+      layout: 'horizontal',
+      minWidth: undefined,
+      name: 'gpt5ReasoningEffort',
+      style: {
+        paddingBottom: 0,
+      },
+    },
+    {
+      children: <TextVerbositySlider />,
+      desc: 'text_verbosity',
+      label: t('extendParams.textVerbosity.title'),
+      layout: 'horizontal',
+      minWidth: undefined,
+      name: 'textVerbosity',
+      style: {
+        paddingBottom: 0,
+      },
+    },
+    {
+      children: <ThinkingBudgetSlider />,
+      label: t('extendParams.reasoningBudgetToken.title'),
+      layout: 'vertical',
+      minWidth: 470,
+      name: 'thinkingBudget',
+      style: {
+        paddingBottom: 0,
+      },
+      tag: 'thinkingBudget',
+    },
+    {
+      children: <Switch />,
+      desc: t('extendParams.urlContext.desc'),
+      label: t('extendParams.urlContext.title'),
+      layout: 'horizontal',
+      minWidth: undefined,
+      name: 'urlContext',
+      style: {
+        width: 445,
+      },
+      tag: 'urlContext',
+    },
+    {
+      children: <ThinkingSlider />,
+      label: t('extendParams.thinking.title'),
+      layout: 'horizontal',
+      minWidth: undefined,
+      name: 'thinking',
       style: {
         paddingBottom: 0,
       },
@@ -99,9 +165,7 @@ const ControlsForm = memo<ControlsProps>(({ setUpdating }) => {
       }
       itemsType={'flat'}
       onValuesChange={async (_, values) => {
-        setUpdating(true);
         await updateAgentChatConfig(values);
-        setUpdating(false);
       }}
       size={'small'}
       style={{ fontSize: 12 }}
